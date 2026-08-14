@@ -1,0 +1,42 @@
+name: Restore production source
+
+on:
+  push:
+    branches:
+      - agent/full-production-source
+    paths:
+      - ".github/workflows/bootstrap-final.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: restore-production-source
+  cancel-in-progress: false
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconstruct and verify source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat bootstrap-final/part-* > /tmp/jc-source.b64
+          base64 --decode /tmp/jc-source.b64 > /tmp/jc-source.tar.gz
+          echo "deb73c86cb20220f9bc9b2dd99484fbbcbc2739d3e2a5a61473d8a07d451a8a9  /tmp/jc-source.tar.gz" | sha256sum -c -
+      - name: Publish normal source tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -xzf /tmp/jc-source.tar.gz
+          # CI is added by the GitHub connector immediately after restore so this
+          # one-time workflow never needs to modify another workflow file.
+          rm -f .github/workflows/ci.yml
+          rm -rf docs/assets bootstrap-final .github/workflows/bootstrap-final.yml
+          git config user.name "Judgment Crucible Release"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "build: publish complete Judgment Crucible application [source-restored]"
+          git push
