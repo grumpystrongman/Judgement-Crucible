@@ -1,0 +1,16 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "publicSessions": {
+      "$room": {
+        ".read": "auth != null",
+        ".write": false
+      }
+    },
+    "privateSessions": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}

@@ -1,0 +1,898 @@
+{
+  "$schema": "./trusted-path.schema.json",
+  "package": {
+    "package_id": "cyber-ronin.judgment-crucible.trusted-path",
+    "package_version": "2.0.0",
+    "scenario_id": "trusted-path",
+    "scenario_version": "2.0.0",
+    "title": "The Trusted Path",
+    "experience": "The Judgment Crucible",
+    "publisher": "Cyber Ronin",
+    "status": "build-ready",
+    "rules_authority": "The Judgment Crucible - V2 Game Logic and State-Transition Specification.docx",
+    "experience_authority": "Cyber Ronin - The Judgment Crucible - Application Experience and Build Specification.docx",
+    "deterministic": true
+  },
+  "experience_contract": {
+    "promise": "Make a defensible call before certainty arrives, name what is being spent, and own when the posture will change.",
+    "surfaces": {
+      "participant": {
+        "route": "/play",
+        "screen_prefix": "P-"
+      },
+      "room": {
+        "route": "/room",
+        "screen_prefix": "R-"
+      },
+      "host": {
+        "route": "/host",
+        "screen_prefix": "H-"
+      }
+    },
+    "starting_state_display": "CONTINUITY 8   TRUST 7   TRUTH 5",
+    "judgment_statement": "We are choosing ___ to protect ___, accepting ___ until ___. ___ owns the risk.",
+    "participant_visible_fields": [
+      "visible_state",
+      "movement",
+      "narrative",
+      "vote_distribution"
+    ],
+    "host_only_fields": [
+      "hidden_state",
+      "debt",
+      "event_flags",
+      "conditions",
+      "rule_ids",
+      "future_consequences"
+    ]
+  },
+  "duration_variants": {
+    "30": {
+      "enabled": true,
+      "label": "30-minute standard",
+      "calls": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ],
+      "chair_count": 4,
+      "monday_consequence_count": 2,
+      "monday_question_count": 2,
+      "timing_seconds": {
+        "opening": 150,
+        "C1": 270,
+        "C2": 300,
+        "C3": 300,
+        "C4": 300,
+        "monday_after": 390,
+        "close": 90
+      }
+    },
+    "15": {
+      "enabled": false,
+      "reason": "Requires an approved C1-to-C4 bridge state."
+    },
+    "45": {
+      "enabled": false,
+      "reason": "Requires approved extended pressure and question configuration."
+    },
+    "60": {
+      "enabled": false,
+      "reason": "Requires approved optional inject configuration."
+    }
+  },
+  "state_model": {
+    "visible": {
+      "continuity": {
+        "start": 8,
+        "min": 0,
+        "max": 10,
+        "label": "Continuity"
+      },
+      "trust": {
+        "start": 7,
+        "min": 0,
+        "max": 10,
+        "label": "Trust"
+      },
+      "truth": {
+        "start": 5,
+        "min": 0,
+        "max": 10,
+        "label": "Truth"
+      }
+    },
+    "hidden": {
+      "debt": {
+        "exposure": {
+          "start": 0,
+          "min": 0,
+          "max": 2
+        },
+        "trust": {
+          "start": 0,
+          "min": 0,
+          "max": 2
+        },
+        "evidence": {
+          "start": 0,
+          "min": 0,
+          "max": 2
+        },
+        "alignment": {
+          "start": 0,
+          "min": 0,
+          "max": 2
+        }
+      },
+      "state": {
+        "vendor_connection": "UNKNOWN",
+        "vendor_deadline": false
+      },
+      "flags": {
+        "EXPOSURE_INCIDENT_APPLIED": false,
+        "CONTINUITY_ZERO_APPLIED": false,
+        "TRUST_ZERO_APPLIED": false,
+        "TRUTH_ZERO_APPLIED": false
+      }
+    }
+  },
+  "resolution_order": [
+    "capture_vote_distribution",
+    "capture_reconciled_chair_decision",
+    "score_judgment_elements_and_inputs",
+    "apply_option_visible_movement",
+    "apply_hesitation_once_per_call",
+    "apply_option_debt_and_state_operations",
+    "apply_repeated_exposure_incident_once",
+    "clamp_state",
+    "apply_new_zero_state_narratives_once",
+    "publish_consequence_movement_and_resulting_state",
+    "persist_event_and_next_screen"
+  ],
+  "judgment_elements": [
+    "decision",
+    "priority",
+    "tradeoff",
+    "trigger",
+    "owner"
+  ],
+  "hesitation": {
+    "rule_id": "TIME-01",
+    "trigger": "chair_clock_expired",
+    "movement": {
+      "continuity": -1,
+      "trust": 0,
+      "truth": 0
+    },
+    "max_per_call": 1,
+    "grace_seconds": 10,
+    "room_text": "The business does not wait for consensus."
+  },
+  "global_events": {
+    "repeated_exposure": {
+      "rule_id": "EVT-EXP-01",
+      "condition": {
+        "all": [
+          {
+            "path": "pre.hidden.debt.exposure",
+            "op": "lt",
+            "value": 2
+          },
+          {
+            "path": "post.hidden.debt.exposure",
+            "op": "eq",
+            "value": 2
+          },
+          {
+            "path": "post.hidden.flags.EXPOSURE_INCIDENT_APPLIED",
+            "op": "eq",
+            "value": false
+          }
+        ]
+      },
+      "movement": {
+        "continuity": -1,
+        "trust": 0,
+        "truth": 0
+      },
+      "set_flags": {
+        "EXPOSURE_INCIDENT_APPLIED": true
+      },
+      "narrative": "One altered priority order has already shipped after the second decision to keep an unvalidated path active."
+    }
+  },
+  "zero_states": {
+    "continuity": {
+      "flag": "CONTINUITY_ZERO_APPLIED",
+      "narrative": "Operational recovery capacity is exhausted. The COO centralizes fulfillment priorities and imposes the next decision deadline.",
+      "mechanical_effect": "narrative_only"
+    },
+    "trust": {
+      "flag": "TRUST_ZERO_APPLIED",
+      "narrative": "An external stakeholder imposes a 30-minute reporting cadence and requests written decision ownership.",
+      "mechanical_effect": "narrative_only"
+    },
+    "truth": {
+      "flag": "TRUTH_ZERO_APPLIED",
+      "narrative": "All future assurance language must carry the label UNVERIFIED until evidence quality improves.",
+      "mechanical_effect": "narrative_only"
+    }
+  },
+  "narrative_ground_truth": {
+    "hidden_truth": "A suspected actor uses a trusted vendor support connection and two privileged service identities to manipulate selected high-value orders. Failed transactions, retries, rerouting, and manual correction provide cover for changes that look operationally plausible.",
+    "reveal_call": "C3",
+    "forbidden_framing": "Never imply that participants should have guessed the integrity attack."
+  },
+  "calls": [
+    {
+      "call_id": "C1",
+      "title": "Contain or preserve the business",
+      "chair_clock_seconds": 20,
+      "facts": "At 7:12 a.m., order failures are concentrated around retries, rerouting, and manual correction. Two privileged service identities authenticated through a trusted vendor support connection at 2:41 a.m.",
+      "knowns": [
+        "Unauthorized activity is confirmed.",
+        "Order failures are already affecting operations."
+      ],
+      "unknowns": [
+        "Malicious intent is not confirmed.",
+        "Continued access and total business impact are not known."
+      ],
+      "screen_ids": {
+        "fact": "R-C1-FACT",
+        "options": "R-C1-OPTIONS",
+        "split": "R-C1-SPLIT",
+        "pressure": "R-C1-PRESSURE",
+        "chair": "R-C1-CHAIR"
+      },
+      "pressure_voices": [
+        {
+          "role": "Operations",
+          "text": "If you shut this path down, orders stop across the network."
+        },
+        {
+          "role": "Legal",
+          "text": "If you call this contained, assume that sentence will be read back to you."
+        }
+      ],
+      "options": [
+        {
+          "option_key": "C1-A",
+          "authorized_decision": "Disable the vendor support connection and force privileged reauthentication.",
+          "movement": {
+            "continuity": -2,
+            "trust": 0,
+            "truth": 2
+          },
+          "narrative": "Backlog begins; new privileged sessions stop.",
+          "operations": [
+            {
+              "op": "set",
+              "path": "hidden.state.vendor_connection",
+              "value": "OFF"
+            }
+          ],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C1-A-OUTCOME"
+        },
+        {
+          "option_key": "C1-B",
+          "authorized_decision": "Keep the connection active with enhanced monitoring and transaction limits.",
+          "movement": {
+            "continuity": 1,
+            "trust": -1,
+            "truth": 0
+          },
+          "narrative": "A privileged session appears from an impossible region.",
+          "operations": [
+            {
+              "op": "set",
+              "path": "hidden.state.vendor_connection",
+              "value": "ON"
+            },
+            {
+              "op": "add",
+              "path": "hidden.debt.exposure",
+              "value": 1
+            }
+          ],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C1-B-OUTCOME"
+        },
+        {
+          "option_key": "C1-C",
+          "authorized_decision": "Isolate vendor access; move priority orders to an independent manual process at roughly one-third capacity.",
+          "movement": {
+            "continuity": -1,
+            "trust": 1,
+            "truth": 0
+          },
+          "narrative": "Priority orders move to the manual path.",
+          "operations": [
+            {
+              "op": "set",
+              "path": "hidden.state.vendor_connection",
+              "value": "OFF"
+            },
+            {
+              "op": "add_if",
+              "path": "hidden.debt.alignment",
+              "value": 1,
+              "condition": {
+                "path": "inputs.judgment.owner",
+                "op": "eq",
+                "value": false
+              }
+            }
+          ],
+          "required_inputs": [
+            "judgment.owner"
+          ],
+          "outcome_screen_id": "R-C1-C-OUTCOME"
+        },
+        {
+          "option_key": "C1-D",
+          "authorized_decision": "Wait 30 minutes for vendor confirmation before changing access.",
+          "movement": {
+            "continuity": 0,
+            "trust": -1,
+            "truth": 1
+          },
+          "narrative": "The vendor deadline begins.",
+          "operations": [
+            {
+              "op": "set",
+              "path": "hidden.state.vendor_connection",
+              "value": "ON"
+            },
+            {
+              "op": "set",
+              "path": "hidden.state.vendor_deadline",
+              "value": true
+            },
+            {
+              "op": "add",
+              "path": "hidden.debt.exposure",
+              "value": 1
+            }
+          ],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C1-D-OUTCOME"
+        }
+      ]
+    },
+    {
+      "call_id": "C2",
+      "title": "Control has already slipped",
+      "chair_clock_seconds": 20,
+      "on_enter": [
+        {
+          "op": "set",
+          "path": "hidden.state.vendor_connection",
+          "value": "ON"
+        }
+      ],
+      "facts": "A business unit has restored a narrower vendor connection without incident-command approval. A strategic shipment depends on it. The connection is live, identity validation is incomplete, and no clear decision right has been documented.",
+      "knowns": [
+        "The connection was restored outside incident command.",
+        "A strategic shipment depends on the restored path."
+      ],
+      "unknowns": [
+        "The restored identities are not fully validated.",
+        "The authorized decision right is unclear."
+      ],
+      "screen_ids": {
+        "fact": "R-C2-FACT",
+        "options": "R-C2-OPTIONS",
+        "split": "R-C2-SPLIT",
+        "pressure": "R-C2-PRESSURE",
+        "chair": "R-C2-CHAIR"
+      },
+      "pressure_voices": [
+        {
+          "role": "Operations",
+          "text": "The shipment misses its window if you close this path now."
+        },
+        {
+          "role": "CEO",
+          "text": "Tell me who has the authority to accept this risk."
+        }
+      ],
+      "options": [
+        {
+          "option_key": "C2-A",
+          "authorized_decision": "Shut the re-enabled connection down immediately.",
+          "movement": {
+            "continuity": -2,
+            "trust": 0,
+            "truth": 1
+          },
+          "narrative": "The restored connection is disabled.",
+          "operations": [
+            {
+              "op": "set",
+              "path": "hidden.state.vendor_connection",
+              "value": "OFF"
+            },
+            {
+              "op": "add_if",
+              "path": "hidden.debt.alignment",
+              "value": -1,
+              "condition": {
+                "path": "inputs.decision_right_explicit",
+                "op": "eq",
+                "value": true
+              }
+            }
+          ],
+          "required_inputs": [
+            "decision_right_explicit"
+          ],
+          "outcome_screen_id": "R-C2-A-OUTCOME"
+        },
+        {
+          "option_key": "C2-B",
+          "authorized_decision": "Permit the connection with enhanced monitoring and a two-hour limit.",
+          "movement": {
+            "continuity": 1,
+            "trust": 0,
+            "truth": 0
+          },
+          "narrative": "The path remains active under a two-hour limit.",
+          "operations": [
+            {
+              "op": "add",
+              "path": "hidden.debt.exposure",
+              "value": 1
+            },
+            {
+              "op": "add_if",
+              "path": "hidden.debt.evidence",
+              "value": 1,
+              "condition": {
+                "path": "pre.hidden.debt.exposure",
+                "op": "gte",
+                "value": 1
+              }
+            }
+          ],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C2-B-OUTCOME"
+        },
+        {
+          "option_key": "C2-C",
+          "authorized_decision": "Build a restricted temporary path for validated identities and selected orders.",
+          "movement": {
+            "continuity": -1,
+            "trust": 1,
+            "truth": 0
+          },
+          "narrative": "A restricted path is prepared for selected orders.",
+          "operations": [
+            {
+              "op": "add_if",
+              "path": "hidden.debt.exposure",
+              "value": -1,
+              "condition": {
+                "all": [
+                  {
+                    "path": "inputs.identities_validated",
+                    "op": "eq",
+                    "value": true
+                  },
+                  {
+                    "path": "inputs.judgment.trigger",
+                    "op": "eq",
+                    "value": true
+                  }
+                ]
+              }
+            }
+          ],
+          "required_inputs": [
+            "identities_validated",
+            "judgment.trigger"
+          ],
+          "outcome_screen_id": "R-C2-C-OUTCOME"
+        },
+        {
+          "option_key": "C2-D",
+          "authorized_decision": "Escalate the risk decision to the CEO before acting.",
+          "movement": {
+            "continuity": -1,
+            "trust": -1,
+            "truth": 0
+          },
+          "narrative": "Escalation begins while the restored path remains live.",
+          "operations": [
+            {
+              "op": "add_if",
+              "path": "hidden.debt.alignment",
+              "value": 1,
+              "condition": {
+                "path": "inputs.interim_recommendation",
+                "op": "eq",
+                "value": false
+              }
+            }
+          ],
+          "required_inputs": [
+            "interim_recommendation"
+          ],
+          "outcome_screen_id": "R-C2-D-OUTCOME"
+        }
+      ]
+    },
+    {
+      "call_id": "C3",
+      "title": "The first external signal",
+      "chair_clock_seconds": 20,
+      "facts": "A major customer reports duplicated and altered orders. Order integrity cannot be confirmed. No broad data extraction is visible. Failed transactions and retries are now understood as cover for operationally plausible manipulation.",
+      "knowns": [
+        "Selected orders were altered.",
+        "A major customer has detected the issue."
+      ],
+      "unknowns": [
+        "The full set of affected orders is not known.",
+        "No broad extraction is visible."
+      ],
+      "screen_ids": {
+        "fact": "R-C3-FACT",
+        "options": "R-C3-OPTIONS",
+        "split": "R-C3-SPLIT",
+        "pressure": "R-C3-PRESSURE",
+        "chair": "R-C3-CHAIR"
+      },
+      "pressure_voices": [
+        {
+          "role": "Communications",
+          "text": "The customer is already defining the incident for us."
+        },
+        {
+          "role": "Operations",
+          "text": "A full pause stops every affected order, including legitimate ones."
+        }
+      ],
+      "options": [
+        {
+          "option_key": "C3-A",
+          "authorized_decision": "Disclose a potential integrity issue and begin joint customer validation.",
+          "movement": {
+            "continuity": -1,
+            "trust": 1,
+            "truth": 1
+          },
+          "narrative": "A joint customer validation workstream opens.",
+          "operations": [],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C3-A-OUTCOME"
+        },
+        {
+          "option_key": "C3-B",
+          "authorized_decision": "Acknowledge disruption without mentioning possible manipulation until confirmed.",
+          "movement": {
+            "continuity": 0,
+            "trust": 0,
+            "truth": -1
+          },
+          "narrative": "The phrase service disruption enters the external record.",
+          "operations": [
+            {
+              "op": "add",
+              "path": "hidden.debt.trust",
+              "value": 1
+            }
+          ],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C3-B-OUTCOME"
+        },
+        {
+          "option_key": "C3-C",
+          "authorized_decision": "Pause affected processing and validate all transactions since 2:41 a.m.",
+          "movement": {
+            "continuity": -3,
+            "trust": 1,
+            "truth": 2
+          },
+          "narrative": "Affected processing pauses for validation.",
+          "operations": [
+            {
+              "op": "add",
+              "path": "hidden.debt.exposure",
+              "value": -1
+            }
+          ],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C3-C-OUTCOME"
+        },
+        {
+          "option_key": "C3-D",
+          "authorized_decision": "Continue processing while quarantining high-value orders for manual review.",
+          "movement": {
+            "continuity": -1,
+            "trust": 0,
+            "truth": 1
+          },
+          "narrative": "High-value orders enter manual review.",
+          "operations": [
+            {
+              "op": "add_if",
+              "path": "hidden.debt.exposure",
+              "value": 1,
+              "condition": {
+                "path": "pre.hidden.debt.exposure",
+                "op": "eq",
+                "value": 0
+              }
+            }
+          ],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C3-D-OUTCOME"
+        }
+      ]
+    },
+    {
+      "call_id": "C4",
+      "title": "The CEO wants certainty",
+      "chair_clock_seconds": 20,
+      "facts": "The CEO asks: Is this contained, and can we keep shipping? Access may be bounded; impact is not fully validated. The Chair's exact assurance becomes part of the record.",
+      "knowns": [
+        "Known active access paths may be bounded.",
+        "Impact is not fully validated."
+      ],
+      "unknowns": [
+        "The complete affected population is not known.",
+        "The final incident record may narrow or contradict current assurance language."
+      ],
+      "screen_ids": {
+        "fact": "R-C4-FACT",
+        "options": "R-C4-OPTIONS",
+        "split": "R-C4-SPLIT",
+        "pressure": "R-C4-PRESSURE",
+        "chair": "R-C4-CHAIR"
+      },
+      "pressure_voices": [
+        {
+          "role": "CEO",
+          "text": "I need a yes or no before I call the board chair."
+        },
+        {
+          "role": "Legal",
+          "text": "Bounded access is not the same claim as bounded impact."
+        }
+      ],
+      "options": [
+        {
+          "option_key": "C4-A",
+          "authorized_decision": "Say access is contained and impact remains under investigation; continue restricted processing.",
+          "movement": {
+            "continuity": 1,
+            "trust": -1,
+            "truth": 0
+          },
+          "narrative": "Restricted processing continues under a containment assurance.",
+          "operations": [
+            {
+              "op": "add_if",
+              "path": "hidden.debt.trust",
+              "value": 1,
+              "condition": {
+                "any": [
+                  {
+                    "path": "pre.hidden.debt.exposure",
+                    "op": "gt",
+                    "value": 0
+                  },
+                  {
+                    "path": "pre.hidden.state.vendor_connection",
+                    "op": "eq",
+                    "value": "ON"
+                  }
+                ]
+              }
+            }
+          ],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C4-A-OUTCOME"
+        },
+        {
+          "option_key": "C4-B",
+          "authorized_decision": "Say access is bounded, not impact; pause affected orders until integrity is proven.",
+          "movement": {
+            "continuity": -2,
+            "trust": 2,
+            "truth": 1
+          },
+          "narrative": "Affected orders pause until integrity is proven.",
+          "operations": [],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C4-B-OUTCOME"
+        },
+        {
+          "option_key": "C4-C",
+          "authorized_decision": "Say there is no evidence of broader impact; continue operations.",
+          "movement": {
+            "continuity": 1,
+            "trust": 1,
+            "truth": -2
+          },
+          "narrative": "Operations continue under a narrow assurance.",
+          "operations": [
+            {
+              "op": "add",
+              "path": "hidden.debt.trust",
+              "value": 1
+            }
+          ],
+          "required_inputs": [],
+          "outcome_screen_id": "R-C4-C-OUTCOME"
+        },
+        {
+          "option_key": "C4-D",
+          "authorized_decision": "Request one hour before answering; maintain the current posture.",
+          "movement": {
+            "continuity": 0,
+            "trust": -1,
+            "truth": 1
+          },
+          "narrative": "The current posture remains while the answer is deferred.",
+          "operations": [
+            {
+              "op": "add_if",
+              "path": "hidden.debt.alignment",
+              "value": 1,
+              "condition": {
+                "path": "inputs.interim_recommendation",
+                "op": "eq",
+                "value": false
+              }
+            }
+          ],
+          "required_inputs": [
+            "interim_recommendation"
+          ],
+          "outcome_screen_id": "R-C4-D-OUTCOME"
+        }
+      ],
+      "reconciliation": {
+        "rule_ids": [
+          "C4-RECON-01",
+          "C4-RECON-02",
+          "C4-RECON-03"
+        ],
+        "clarification_seconds": 10,
+        "blocking": true,
+        "unresolved_rule": "spoken_authorization_maps_to_closest_canonical_option",
+        "event_label": "FACILITATOR_RECONCILED"
+      }
+    }
+  ],
+  "monday_after": {
+    "candidate_limit": 2,
+    "selection": "lowest_priority_number_first",
+    "exclusive_families": [
+      "trust",
+      "exposure"
+    ],
+    "candidates": [
+      {
+        "candidate_id": "MON-TRUST-2",
+        "family": "trust",
+        "priority": 1,
+        "condition": {
+          "path": "hidden.debt.trust",
+          "op": "eq",
+          "value": 2
+        },
+        "movement": {
+          "continuity": 0,
+          "trust": -2,
+          "truth": 0
+        },
+        "narrative": "The phrase used with the board is materially narrower than the final incident record.",
+        "question_id": "Q-TRUST"
+      },
+      {
+        "candidate_id": "MON-EXPOSURE-2",
+        "family": "exposure",
+        "priority": 2,
+        "condition": {
+          "path": "hidden.debt.exposure",
+          "op": "eq",
+          "value": 2
+        },
+        "movement": {
+          "continuity": 0,
+          "trust": -1,
+          "truth": 0
+        },
+        "narrative": "Stakeholders learn leadership extended an unvalidated access path after the first warning.",
+        "question_id": "Q-EXPOSURE"
+      },
+      {
+        "candidate_id": "MON-EVIDENCE",
+        "family": "evidence",
+        "priority": 3,
+        "condition": {
+          "path": "hidden.debt.evidence",
+          "op": "gte",
+          "value": 1
+        },
+        "movement": {
+          "continuity": 0,
+          "trust": 0,
+          "truth": -2
+        },
+        "narrative": "The investigation cannot reconstruct which changed transactions share the original privileged session.",
+        "question_id": "Q-EVIDENCE"
+      },
+      {
+        "candidate_id": "MON-ALIGNMENT",
+        "family": "alignment",
+        "priority": 4,
+        "condition": {
+          "path": "hidden.debt.alignment",
+          "op": "gte",
+          "value": 1
+        },
+        "movement": {
+          "continuity": 0,
+          "trust": -1,
+          "truth": 0
+        },
+        "narrative": "The executive team cannot identify the decision right or who accepted the restored-path risk.",
+        "question_id": "Q-ALIGNMENT"
+      },
+      {
+        "candidate_id": "MON-TRUST-1",
+        "family": "trust",
+        "priority": 5,
+        "condition": {
+          "path": "hidden.debt.trust",
+          "op": "eq",
+          "value": 1
+        },
+        "movement": {
+          "continuity": 0,
+          "trust": -1,
+          "truth": 0
+        },
+        "narrative": "An early assurance is being compared with the final incident record.",
+        "question_id": "Q-TRUST"
+      },
+      {
+        "candidate_id": "MON-EXPOSURE-1",
+        "family": "exposure",
+        "priority": 6,
+        "condition": {
+          "path": "hidden.debt.exposure",
+          "op": "eq",
+          "value": 1
+        },
+        "movement": {
+          "continuity": 0,
+          "trust": 0,
+          "truth": -1
+        },
+        "narrative": "Unauthorized access remained usable longer than leadership understood.",
+        "question_id": "Q-EXPOSURE"
+      }
+    ],
+    "questions": {
+      "universal": "What did you know when you made that call, what did you allow others to infer, and was the decision defensible at that moment?",
+      "Q-TRUST": "What did you know when you used that language, and what did you allow others to infer?",
+      "Q-EXPOSURE": "Who accepted the risk of keeping or restoring the unvalidated path?",
+      "Q-EVIDENCE": "What evidence did your action preserve, and what did it make impossible to know later?",
+      "Q-ALIGNMENT": "Who had the decision right, and why was it not made explicit?",
+      "Q-NONE": "Which trigger in your decision trail was strongest, and did the organization honor it?"
+    }
+  },
+  "close": {
+    "transition_72_hour": "Unauthorized access bounded. Operations recovering. Accountability begins.",
+    "statements": [
+      "The test was not whether you predicted the integrity attack. The test was whether your decision remained defensible when the facts changed.",
+      "We have bounded what we know, not what may have happened. Here is the decision I need, the risk it accepts, and when we will revisit it."
+    ]
+  }
+}

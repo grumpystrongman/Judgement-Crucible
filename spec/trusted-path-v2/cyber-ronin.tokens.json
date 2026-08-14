@@ -1,0 +1,87 @@
+{
+  "package_id": "cyber-ronin.ui-tokens",
+  "version": "2.0.0",
+  "theme": "judgment-chamber",
+  "brand_hierarchy": [
+    "Cyber Ronin",
+    "The Judgment Crucible",
+    "The Trusted Path"
+  ],
+  "color": {
+    "obsidian": "#071017",
+    "background": "#0A151E",
+    "panel": "#102330",
+    "panel_raised": "#142C3B",
+    "signal_cyan": "#00C8F8",
+    "verified_teal": "#00A9B7",
+    "consequence_ember": "#E56A3D",
+    "bone": "#E8EEF1",
+    "steel": "#8297A5",
+    "border": "rgba(120, 190, 215, 0.20)"
+  },
+  "balance": {
+    "controlled_dark_surfaces_percent": 78,
+    "raised_panel_percent": 14,
+    "cyan_active_accents_max_percent": 6,
+    "ember_consequence_accents_max_percent": 2
+  },
+  "typography": {
+    "display": {
+      "family": "Space Grotesk",
+      "weights": [
+        600,
+        700
+      ],
+      "fallback": "Inter, Arial, sans-serif"
+    },
+    "interface": {
+      "family": "Inter",
+      "weights": [
+        400,
+        500,
+        600,
+        700
+      ],
+      "fallback": "Arial, sans-serif"
+    },
+    "instrumentation": {
+      "family": "JetBrains Mono",
+      "weights": [
+        500
+      ],
+      "fallback": "ui-monospace, monospace"
+    }
+  },
+  "shape": {
+    "card_radius_px": 4,
+    "border_px": 1,
+    "blade_cut_px": 14,
+    "touch_target_min_px": 48
+  },
+  "motion_ms": {
+    "fast": 180,
+    "standard": 350,
+    "meter": 650,
+    "reduced_motion_max": 150
+  },
+  "components": [
+    "blade-edge-card",
+    "energy-trace",
+    "ronin-crest-frame",
+    "state-meter",
+    "pressure-chip",
+    "transcript-panel"
+  ],
+  "prohibited": [
+    "bright_white_panels",
+    "repeated_full_cover_art",
+    "generic_security_dashboard",
+    "samurai_stock_art",
+    "literal_swords",
+    "faux_japanese_lettering",
+    "constant_glitch",
+    "green_terminal_cliche",
+    "neon_overload",
+    "confetti"
+  ]
+}
