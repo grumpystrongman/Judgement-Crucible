@@ -1,0 +1,47 @@
+name: Build, Test & Validate
+
+on:
+  push:
+    branches: [main, "agent/**"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Static, scenario, unit, and production build validation
+        run: npm run validate
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Browser and multiplayer validation
+        run: npm run test:e2e
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          if-no-files-found: ignore
+      - name: Commit first-run documentation screenshots
+        if: github.event_name == 'push' && github.ref != 'refs/heads/main' && !contains(github.event.head_commit.message, '[screenshots]')
+        run: |
+          if git status --porcelain public/screenshots | grep -q .; then
+            git config user.name "Judgment Crucible CI"
+            git config user.email "actions@users.noreply.github.com"
+            git add package-lock.json public/screenshots
+            git commit -m "docs: add validated product screenshots [screenshots]"
+            git push
+          fi
