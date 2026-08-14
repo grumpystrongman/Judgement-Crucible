@@ -1,0 +1,15 @@
+# Firebase App Hosting runtime profile for the Next.js application.
+# Firebase injects FIREBASE_CONFIG and FIREBASE_WEBAPP_CONFIG when the backend
+# is connected to a Firebase project/web app.
+runConfig:
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0
+  maxInstances: 20
+  concurrency: 80
+
+env:
+  - variable: REQUIRE_APP_CHECK
+    value: "false"
+    availability:
+      - RUNTIME

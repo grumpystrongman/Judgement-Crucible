@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cyberronin.example/schemas/trusted-path-v2.schema.json",
+  "title": "The Judgment Crucible — Trusted Path Scenario Package",
+  "type": "object",
+  "required": [
+    "package",
+    "experience_contract",
+    "duration_variants",
+    "state_model",
+    "resolution_order",
+    "calls",
+    "monday_after",
+    "close"
+  ],
+  "properties": {
+    "package": {
+      "type": "object",
+      "required": [
+        "package_id",
+        "package_version",
+        "scenario_id",
+        "scenario_version",
+        "deterministic"
+      ]
+    },
+    "experience_contract": {
+      "type": "object"
+    },
+    "duration_variants": {
+      "type": "object",
+      "required": [
+        "30"
+      ]
+    },
+    "state_model": {
+      "type": "object",
+      "required": [
+        "visible",
+        "hidden"
+      ]
+    },
+    "resolution_order": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "string"
+      }
+    },
+    "calls": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/call"
+      }
+    },
+    "monday_after": {
+      "type": "object",
+      "required": [
+        "candidate_limit",
+        "selection",
+        "candidates",
+        "questions"
+      ]
+    },
+    "close": {
+      "type": "object",
+      "required": [
+        "transition_72_hour",
+        "statements"
+      ]
+    }
+  },
+  "$defs": {
+    "movement": {
+      "type": "object",
+      "required": [
+        "continuity",
+        "trust",
+        "truth"
+      ],
+      "properties": {
+        "continuity": {
+          "type": "integer"
+        },
+        "trust": {
+          "type": "integer"
+        },
+        "truth": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "option": {
+      "type": "object",
+      "required": [
+        "option_key",
+        "authorized_decision",
+        "movement",
+        "narrative",
+        "operations",
+        "outcome_screen_id"
+      ],
+      "properties": {
+        "option_key": {
+          "type": "string",
+          "pattern": "^C[1-4]-[A-D]$"
+        },
+        "movement": {
+          "$ref": "#/$defs/movement"
+        }
+      }
+    },
+    "call": {
+      "type": "object",
+      "required": [
+        "call_id",
+        "title",
+        "chair_clock_seconds",
+        "facts",
+        "knowns",
+        "unknowns",
+        "screen_ids",
+        "options"
+      ],
+      "properties": {
+        "call_id": {
+          "type": "string",
+          "pattern": "^C[1-4]$"
+        },
+        "options": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/option"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,348 @@
+{
+  "package_id": "cyber-ronin.judgment-crucible.trusted-path.tests",
+  "version": "2.0.0",
+  "rules_fixtures": [
+    {
+      "test_id": "T1",
+      "name": "Containment",
+      "steps": [
+        {
+          "call_id": "C1",
+          "option": "C1-A",
+          "inputs": {}
+        },
+        {
+          "call_id": "C2",
+          "option": "C2-A",
+          "inputs": {
+            "decision_right_explicit": true
+          }
+        },
+        {
+          "call_id": "C3",
+          "option": "C3-A",
+          "inputs": {}
+        },
+        {
+          "call_id": "C4",
+          "option": "C4-B",
+          "inputs": {}
+        }
+      ],
+      "expected_after_call4": {
+        "visible": {
+          "continuity": 1,
+          "trust": 10,
+          "truth": 10
+        },
+        "debt": {
+          "exposure": 0,
+          "trust": 0,
+          "evidence": 0,
+          "alignment": 0
+        }
+      },
+      "expected_monday": {
+        "selected": [],
+        "final_visible": {
+          "continuity": 1,
+          "trust": 10,
+          "truth": 10
+        }
+      }
+    },
+    {
+      "test_id": "T2",
+      "name": "Compounding risk",
+      "steps": [
+        {
+          "call_id": "C1",
+          "option": "C1-B",
+          "inputs": {}
+        },
+        {
+          "call_id": "C2",
+          "option": "C2-B",
+          "inputs": {}
+        },
+        {
+          "call_id": "C3",
+          "option": "C3-B",
+          "inputs": {}
+        },
+        {
+          "call_id": "C4",
+          "option": "C4-C",
+          "inputs": {}
+        }
+      ],
+      "expected_after_call4": {
+        "visible": {
+          "continuity": 10,
+          "trust": 7,
+          "truth": 2
+        },
+        "debt": {
+          "exposure": 2,
+          "trust": 2,
+          "evidence": 1,
+          "alignment": 0
+        },
+        "flags": {
+          "EXPOSURE_INCIDENT_APPLIED": true
+        }
+      },
+      "expected_monday": {
+        "selected": [
+          "MON-TRUST-2",
+          "MON-EXPOSURE-2"
+        ],
+        "final_visible": {
+          "continuity": 10,
+          "trust": 4,
+          "truth": 2
+        }
+      }
+    },
+    {
+      "test_id": "T3",
+      "name": "Controlled recovery",
+      "steps": [
+        {
+          "call_id": "C1",
+          "option": "C1-D",
+          "inputs": {}
+        },
+        {
+          "call_id": "C2",
+          "option": "C2-C",
+          "inputs": {
+            "identities_validated": true,
+            "judgment": {
+              "trigger": true
+            }
+          }
+        },
+        {
+          "call_id": "C3",
+          "option": "C3-A",
+          "inputs": {}
+        },
+        {
+          "call_id": "C4",
+          "option": "C4-B",
+          "inputs": {}
+        }
+      ],
+      "expected_after_call4": {
+        "visible": {
+          "continuity": 4,
+          "trust": 10,
+          "truth": 8
+        },
+        "debt": {
+          "exposure": 0,
+          "trust": 0,
+          "evidence": 0,
+          "alignment": 0
+        }
+      },
+      "expected_monday": {
+        "selected": [],
+        "final_visible": {
+          "continuity": 4,
+          "trust": 10,
+          "truth": 8
+        }
+      }
+    },
+    {
+      "test_id": "T4",
+      "name": "Governance failure",
+      "steps": [
+        {
+          "call_id": "C1",
+          "option": "C1-C",
+          "inputs": {
+            "judgment": {
+              "owner": false
+            }
+          }
+        },
+        {
+          "call_id": "C2",
+          "option": "C2-D",
+          "inputs": {
+            "interim_recommendation": false
+          }
+        },
+        {
+          "call_id": "C3",
+          "option": "C3-D",
+          "inputs": {}
+        },
+        {
+          "call_id": "C4",
+          "option": "C4-D",
+          "inputs": {
+            "interim_recommendation": false
+          }
+        }
+      ],
+      "expected_after_call4": {
+        "visible": {
+          "continuity": 5,
+          "trust": 6,
+          "truth": 7
+        },
+        "debt": {
+          "exposure": 1,
+          "trust": 0,
+          "evidence": 0,
+          "alignment": 2
+        }
+      },
+      "expected_monday": {
+        "selected": [
+          "MON-ALIGNMENT",
+          "MON-EXPOSURE-1"
+        ],
+        "final_visible": {
+          "continuity": 5,
+          "trust": 5,
+          "truth": 6
+        }
+      }
+    },
+    {
+      "test_id": "T5",
+      "name": "Hesitation",
+      "steps": [
+        {
+          "call_id": "C1",
+          "option": "C1-A",
+          "inputs": {},
+          "hesitation": true
+        },
+        {
+          "call_id": "C2",
+          "option": "C2-A",
+          "inputs": {
+            "decision_right_explicit": true
+          }
+        },
+        {
+          "call_id": "C3",
+          "option": "C3-A",
+          "inputs": {}
+        },
+        {
+          "call_id": "C4",
+          "option": "C4-B",
+          "inputs": {}
+        }
+      ],
+      "expected_after_call4": {
+        "visible": {
+          "continuity": 0,
+          "trust": 10,
+          "truth": 10
+        },
+        "debt": {
+          "exposure": 0,
+          "trust": 0,
+          "evidence": 0,
+          "alignment": 0
+        },
+        "flags": {
+          "CONTINUITY_ZERO_APPLIED": true
+        },
+        "hesitation_events": 1
+      },
+      "expected_monday": {
+        "selected": [],
+        "final_visible": {
+          "continuity": 0,
+          "trust": 10,
+          "truth": 10
+        }
+      }
+    }
+  ],
+  "experience_fixtures": [
+    {
+      "test_id": "UX-01",
+      "given": "15 participants join by room code and confirm readiness",
+      "assert": [
+        "no_account_creation",
+        "joined_count_15",
+        "host_only_phase_advance"
+      ]
+    },
+    {
+      "test_id": "UX-02",
+      "given": "votes split A6/B4/C3/D2",
+      "assert": [
+        "aggregate_distribution_only",
+        "no_participant_names",
+        "no_correctness_cue"
+      ]
+    },
+    {
+      "test_id": "UX-03",
+      "given": "Chair clock expires once and decision arrives in grace period",
+      "assert": [
+        "one_hesitation_event",
+        "continuity_minus_one",
+        "resulting_state_visible"
+      ]
+    },
+    {
+      "test_id": "UX-04",
+      "given": "Chair selects C4-A but speaks C4-C assurance",
+      "assert": [
+        "H-RECON_blocks_advance",
+        "unresolved_maps_to_C4-C",
+        "FACILITATOR_RECONCILED_logged"
+      ]
+    },
+    {
+      "test_id": "UX-05",
+      "given": "phone disconnects after selection before acknowledgment",
+      "assert": [
+        "selection_retained",
+        "idempotent_resubmit",
+        "at_most_one_vote"
+      ]
+    },
+    {
+      "test_id": "UX-06",
+      "given": "room display refreshes during hidden-state resolution",
+      "assert": [
+        "recovering_screen",
+        "no_hidden_state_flash",
+        "latest_approved_snapshot"
+      ]
+    },
+    {
+      "test_id": "UX-07",
+      "given": "same decision trail replayed twice",
+      "assert": [
+        "identical_visible_state",
+        "identical_debt",
+        "identical_monday_selection",
+        "identical_screen_ids"
+      ]
+    },
+    {
+      "test_id": "UX-08",
+      "given": "reduced motion and high contrast enabled",
+      "assert": [
+        "complete_information",
+        "complete_controls",
+        "no_motion_dependency",
+        "no_color_only_meaning"
+      ]
+    }
+  ]
+}

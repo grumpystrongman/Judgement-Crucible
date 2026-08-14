@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 860" role="img" aria-labelledby="title desc">
+<title id="title">Judgment Crucible cyber command room</title><desc id="desc">A cinematic executive incident command room with threat telemetry, decision signals, and a central boardroom table.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050b10"/><stop offset=".52" stop-color="#0b1d27"/><stop offset="1" stop-color="#071017"/></linearGradient>
+  <radialGradient id="cyan" cx="72%" cy="35%" r="48%"><stop stop-color="#22d3ee" stop-opacity=".2"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+  <radialGradient id="red" cx="54%" cy="55%" r="38%"><stop stop-color="#ef4444" stop-opacity=".18"/><stop offset="1" stop-color="#ef4444" stop-opacity="0"/></radialGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#7dd3fc" stroke-opacity=".07"/></pattern>
+</defs>
+<rect width="1536" height="860" fill="url(#bg)"/><rect width="1536" height="860" fill="url(#grid)"/><rect width="1536" height="860" fill="url(#cyan)"/><rect width="1536" height="860" fill="url(#red)"/>
+<g opacity=".84">
+  <rect x="760" y="105" width="640" height="346" rx="24" fill="#07121a" stroke="#1f4758" stroke-width="2"/>
+  <path d="M808 368 L874 320 930 348 1002 226 1068 275 1132 186 1197 244 1270 172 1346 206" fill="none" stroke="#42d7f5" stroke-width="5" filter="url(#glow)"/>
+  <path d="M808 386 H1348" stroke="#254554"/><path d="M808 322 H1348M808 258 H1348M808 194 H1348" stroke="#17323e"/>
+  <circle cx="1002" cy="226" r="9" fill="#f87171" filter="url(#glow)"/><circle cx="1197" cy="244" r="8" fill="#f87171"/>
+  <g fill="#8be9fd" font-family="Arial, sans-serif" font-size="18" letter-spacing="3"><text x="808" y="151">INCIDENT TELEMETRY</text><text x="808" y="425" fill="#ff8a8a">DECISION WINDOW ACTIVE</text></g>
+</g>
+<g transform="translate(714 546)">
+  <ellipse cx="315" cy="174" rx="414" ry="111" fill="#020609" opacity=".9"/>
+  <path d="M0 110 L613 35 724 133 110 212Z" fill="#102732" stroke="#2d5867" stroke-width="3"/>
+  <path d="M82 116 L556 61" stroke="#3ad7ee" stroke-opacity=".45" stroke-width="3"/>
+  <rect x="279" y="93" width="140" height="74" rx="8" fill="#071017" stroke="#ef4444" stroke-opacity=".75"/>
+  <text x="349" y="126" text-anchor="middle" fill="#ff8585" font-family="Arial, sans-serif" font-size="14" letter-spacing="2">CHAIR</text><text x="349" y="151" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="28" font-weight="700">00:20</text>
+</g>
+<g fill="#05090c">
+  <circle cx="747" cy="560" r="38"/><path d="M699 688c10-85 32-122 48-122s38 37 48 122z"/>
+  <circle cx="1326" cy="535" r="34"/><path d="M1284 654c8-80 27-113 42-113 16 0 35 33 43 113z"/>
+  <circle cx="1185" cy="676" r="32"/><path d="M1148 788c8-75 23-105 37-105s30 30 38 105z"/>
+</g>
+<g transform="translate(95 112)" font-family="Arial, sans-serif"><text fill="#7dd3fc" font-size="18" letter-spacing="5">EXECUTIVE CYBER JUDGMENT</text><text y="74" fill="#f8fafc" font-size="70" font-weight="800" letter-spacing="-2">THE ROOM IS SPLIT.</text><text y="132" fill="#a8c2cf" font-size="27">Pressure is real. Evidence is incomplete.</text><text y="170" fill="#a8c2cf" font-size="27">Your decision still has to hold up on Monday.</text></g>
+</svg>
