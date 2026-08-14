@@ -1,0 +1,26 @@
+name: Bootstrap source
+
+on:
+  push:
+    branches:
+      - agent/production-firebase-build
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    if: "!contains(github.event.head_commit.message, '[source-bootstrap]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore source tree
+        run: |
+          cat bootstrap/part-* | base64 --decode > /tmp/jc-source.tar.gz
+          tar -xzf /tmp/jc-source.tar.gz
+          rm -rf bootstrap .github/workflows/bootstrap-source.yml
+          git config user.name "Judgment Crucible Bootstrap"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "build: production Firebase multiplayer application [source-bootstrap]"
+          git push
